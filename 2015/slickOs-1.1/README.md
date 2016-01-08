@@ -1,4 +1,5 @@
 ### slickOs 1.1
+Image: https://www.vulnhub.com/entry/sickos-11,132/
 
 Netscan
 ```
@@ -9,7 +10,7 @@ Nmap scan report for 192.168.174.133
 Host is up (0.00013s latency).
 ```
 
-Portscan Vic
+Portscan on Victim
 ```
 nmap -sS -A -PN -p- -T5 192.168.174.133
 
@@ -94,16 +95,15 @@ PROXY: 192.168.174.133:3128
 
 -----------------
 
-GENERATED WORDS: 20458                                                         
+GENERATED WORDS: 20458
 
 ---- Scanning URL: http://192.168.174.133/ ----
-+ http://192.168.174.133/cgi-bin/ (CODE:403|SIZE:291)                                                                                                                                                       
-+ http://192.168.174.133/connect (CODE:200|SIZE:109)                                                                                                                                                        
-+ http://192.168.174.133/index (CODE:200|SIZE:21)                                                                                                                                                           
-+ http://192.168.174.133/robots (CODE:200|SIZE:45)                                                                                                                                                          
-+ http://192.168.174.133/robots.txt (CODE:200|SIZE:45)                                                                                                                                                      
-+ http://192.168.174.133/server-status (CODE:403|SIZE:296)                                                                                                                                                  
-                                                                                                                                                                                                            
++ http://192.168.174.133/cgi-bin/ (CODE:403|SIZE:291)
++ http://192.168.174.133/connect (CODE:200|SIZE:109)
++ http://192.168.174.133/index (CODE:200|SIZE:21)
++ http://192.168.174.133/robots (CODE:200|SIZE:45)
++ http://192.168.174.133/robots.txt (CODE:200|SIZE:45)
++ http://192.168.174.133/server-status (CODE:403|SIZE:296)
 ```
 
 Check robots.txt
@@ -266,6 +266,7 @@ Accept-Encoding: gzip, deflate
 Cookie: PHPSESSID=grvc7rgk8qqdqoqvalcpqmsh35
 Connection: close
 
+--------------------------------------------
 
 HTTP/1.0 200 OK
 Date: Tue, 05 Jan 2016 11:30:43 GMT
@@ -314,6 +315,8 @@ Accept-Encoding: gzip, deflate
 Cookie: PHPSESSID=grvc7rgk8qqdqoqvalcpqmsh35
 Connection: close
 
+--------------------------------------------
+
 HTTP/1.0 200 OK
 Date: Tue, 05 Jan 2016 11:33:32 GMT
 Server: Apache/2.2.22 (Ubuntu)
@@ -325,5 +328,3 @@ Connection: close
 uid=33(www-data) gid=33(www-data) groups=33(www-data)
 
 ```
-
-...
