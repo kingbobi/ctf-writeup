@@ -1,4 +1,4 @@
-### slickOs 1.1
+## slickOs 1.1
 Image: https://www.vulnhub.com/entry/sickos-11,132/
 
 Netscan
@@ -212,7 +212,7 @@ got it :)
 
 
 
-## other way to www-data (shellshock)
+### other way to www-data (shellshock)
 
 ```
 nikto -h 192.168.174.133 -useproxy 192.168.174.133:3128
