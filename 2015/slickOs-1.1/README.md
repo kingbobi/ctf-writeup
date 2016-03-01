@@ -1,4 +1,4 @@
-## slickOs 1.1
+## sickOs 1.1
 Image: https://www.vulnhub.com/entry/sickos-11,132/
 
 Netscan
